@@ -23,10 +23,9 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "http://localhost:8080/ws") // Specify the exact origins
+                .allowedOrigins("*") // Specify the exact origins
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowedHeaders("*");
     }
 
     private final UserRepository userRepository;

@@ -1,9 +1,8 @@
 package com.student.service.impl;
 
 import com.student.dto.LoginDTO;
-import com.student.dto.AuthenticationResponseModel;
+import com.student.dto.AuthenticationResponseDTO;
 import com.student.dto.RegisterDTO;
-import com.student.dto.UserDTO;
 import com.student.entity.User;
 import com.student.mapper.PageMapper;
 import com.student.mapper.UserMapper;
@@ -21,7 +20,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -36,18 +34,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public AuthenticationResponseModel register(RegisterDTO request) {
+    public AuthenticationResponseDTO register(RegisterDTO request) {
         if (isEmailOrPhoneAlreadyExists(request.getUsername())) {
             throw new EntityExistsException("Email or Phone Number is already exists");
         }
+        User user  = userMapper.userEntity(request);
+        user.setPassword(passwordEncoder.encode("@123456"));
+        User saveUSer = userRepository.save(userMapper.userEntity(request));
 
-        User user = userRepository.save(userMapper.userEntity(request));
-
-        return AuthenticationResponseModel.builder().token(jwtService.generateToken(user)).build();
+        return AuthenticationResponseDTO.builder().token(jwtService.generateToken(saveUSer)).build();
     }
 
     @Override
-    public AuthenticationResponseModel login(LoginDTO request) {
+    public AuthenticationResponseDTO login(LoginDTO request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -58,7 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("User " + request.getUsername() + " Not Found"));
 
-        return AuthenticationResponseModel
+        return AuthenticationResponseDTO
                 .builder()
                 .token(jwtService.generateToken(user))
                 .build();

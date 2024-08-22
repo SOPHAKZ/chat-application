@@ -31,12 +31,13 @@ public class SecurityConfiguration {
                                         "/v3/api-docs/**",
                                         "/swagger-resources",
                                         "/swagger-resources/**",
-                                        "/configuration/ui",
-                                        "/configuration/security",
                                         "/swagger-ui/**",
                                         "/webjars/**",
                                         "swagger-ui.html")
                                 .permitAll()
+                                .requestMatchers("/api/v1/user/register").hasAuthority("ADMIN")
+                                .requestMatchers("/api/v1/user/update/**").hasAuthority("ADMIN")
+                                .requestMatchers("/api/v1/user/delete/**").hasAuthority("ADMIN")
                                 .anyRequest().authenticated())
                 .exceptionHandling(e->e.authenticationEntryPoint(entryPoint))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,5 +1,6 @@
 package com.student.controller;
 
+import com.student.dto.LoginDTO;
 import com.student.dto.RegisterDTO;
 import com.student.entity.User;
 
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -26,7 +28,6 @@ public class StudentController {
     private final AuthenticationService authenticationService;
     private final UserMapper userMapper;
     private final PageMapper pageMapper;
-    private final UserMapperImpl userMapperImpl;
 
 
     @GetMapping("/{id}")
@@ -60,6 +61,18 @@ public class StudentController {
         );
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<ResponseModel> registeredUsers(@RequestBody RegisterDTO request){
+        return ResponseEntity.ok()
+                .body(
+                        ResponseModel.builder()
+                                .status(HttpStatus.OK)
+                                .success(true)
+                                .data(authenticationService.register(request))
+                                .build()
+                );
+
+    }
     @PutMapping("/update/{id}")
     public ResponseEntity<ResponseModel> updateUserById(@PathVariable("id") Long id, @RequestBody RegisterDTO updateDTO){
         return ResponseEntity.ok().body(

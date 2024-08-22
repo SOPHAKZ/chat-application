@@ -12,7 +12,6 @@ services:
       - '5432:5432'
     networks:
       - chat_network
-
   springboot:
     build:
       context: .
@@ -29,7 +28,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: password
     networks:
       - chat_network
-
 networks:
   chat_network:
     driver: bridge
+
