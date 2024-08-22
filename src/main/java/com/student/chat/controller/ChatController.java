@@ -26,33 +26,26 @@ public class ChatController {
 
     private final ChatMessageService chatMessageService;
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final ChatMessageRepository chatMessageRepository;
 
-    @MessageMapping("/message")
-    @SendTo("/chatroom/public")
-    public Message receiveMessage(@Payload Message message){
-        return message;
-    }
+//    @MessageMapping("/message")
+//    @SendTo("/chatroom/public")
+//    public Message receiveMessage(@Payload Message message){
+//        return message;
+//    }
 
     @MessageMapping("/private-message")
-    @SendTo("/chatroom/public")
+    @SendTo("/user/queue/private")
     public Message recMessage(@Payload Message message){
-        try {
-            simpMessagingTemplate.convertAndSendToUser(message.getSenderId(),"/queue/messages",message);
-            chatMessageService.save(
-                    ChatMessage.builder()
-                            .chatId(message.getSenderId()+"_"+message.getRecipientId())
-                            .senderId(message.getSenderId())
-                            .recipientId(message.getRecipientId())
-                            .date(message.getDate())
-                            .content(message.getContent())
-                            .build()
-            );
-            return message;
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+        simpMessagingTemplate.convertAndSendToUser(message.getSenderId(),"/queue/messages",message);
+        chatMessageService.save(
+                ChatMessage.builder()
+                        .senderId(message.getSenderId())
+                        .recipientId(message.getRecipientId())
+                        .date(message.getDate())
+                        .content(message.getContent())
+                        .build()
+        );
+        return message;
     }
 
     @GetMapping("/messages/{senderId}/{receiverId}")

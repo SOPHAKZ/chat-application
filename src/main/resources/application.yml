@@ -1,21 +1,4 @@
-#spring:
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/tb_student
-#    username: postgres
-#    password: phak1502
-#  jpa:
-#    database-platform:
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
-
-
 spring:
-  datasource:
-    url: jdbc:postgresql://docker_db:5432/chat_api
-    username: admin
-    password: password
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+  profiles:
+    active:
+      - dev
